@@ -71,22 +71,22 @@ info "Verifying container status..."
 
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
-# Application health check
-
-info "Waiting for application to become available..."
-
-ATTEMPTS=20
-SLEEP=15
-
-for i in $(seq 1 $ATTEMPTS); do
-    if curl -fsS http://127.0.0.1 >/dev/null; then
-        info "Application is up and responding on port 80"
-        break
-    else
-        warn "Waiting for application... ($i/$ATTEMPTS)"
-        sleep $SLEEP
-    fi
-done
+# # Application health check
+#
+# info "Waiting for application to become available..."
+#
+# ATTEMPTS=20
+# SLEEP=15
+#
+# for i in $(seq 1 $ATTEMPTS); do
+#     if curl -fsS http://127.0.0.1 >/dev/null; then
+#         info "Application is up and responding on port 80"
+#         break
+#     else
+#         warn "Waiting for application... ($i/$ATTEMPTS)"
+#         sleep $SLEEP
+#     fi
+# done
 
 # Final status
 
