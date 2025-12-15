@@ -76,7 +76,7 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 info "Waiting for application to become available..."
 
 ATTEMPTS=20
-SLEEP=3
+SLEEP=15
 
 for i in $(seq 1 $ATTEMPTS); do
     if curl -fsS http://127.0.0.1 >/dev/null; then
