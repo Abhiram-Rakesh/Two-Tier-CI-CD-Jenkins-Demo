@@ -75,11 +75,11 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 info "Waiting for application to become available..."
 
-ATTEMPTS=10
+ATTEMPTS=20
 SLEEP=3
 
 for i in $(seq 1 $ATTEMPTS); do
-    if curl localhost >/dev/null; then
+    if curl -fsS http://127.0.0.1 >/dev/null; then
         info "Application is up and responding on port 80"
         break
     else
