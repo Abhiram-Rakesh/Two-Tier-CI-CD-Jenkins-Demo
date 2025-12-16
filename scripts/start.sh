@@ -59,11 +59,8 @@ fi
 
 # Build & start containers
 
-info "Building Docker images..."
-docker compose build
-
 info "Starting application stack..."
-docker compose up -d
+docker-compose up -d
 
 # Post-start verification
 
