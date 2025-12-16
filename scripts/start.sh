@@ -53,8 +53,8 @@ info "All required files found"
 info "Checking Docker daemon..."
 
 if ! systemctl is-active --quiet docker; then
-    warn "Docker is not running. Starting Docker..."
-    sudo systemctl start docker
+    error "Docker daemon is not running. Please start Docker before running this script."
+    exit 1
 fi
 
 # Build & start containers
