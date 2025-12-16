@@ -22,6 +22,20 @@ pipeline {
             }
         }
 
+        stage('Prepare Environment') {
+            steps {
+                echo "Preparing environment configuration..."
+                sh '''
+                if [ ! -f .env ]; then
+                  echo "[INFO] .env not found, creating from .env.example"
+                  cp .env.example .env
+                else
+                  echo "[INFO] .env already exists"
+                fi
+                '''
+            }
+        }
+
         stage('Shutdown Existing Application') {
             steps {
                 echo "Stopping existing containers (if running)..."
