@@ -31,7 +31,7 @@ This project is designed to be **resume-ready** and mirrors how small-to-medium 
                                                                             v
                                                              +-----------------------------+
                                                              |      Application Server     |
-                                                             |        (Same EC2)            |
+                                                             |        (AWS EC2)            |
                                                              |                             |
                                                              | +-------------------------+ |
                                                              | | Flask App (Gunicorn)    | |
@@ -81,16 +81,16 @@ This project is designed to be **resume-ready** and mirrors how small-to-medium 
 
 ## Installation Instructions
 
-### 1️⃣ Clone the Repository
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/<your-username>/Two-Tier-CI-CD-Jenkins--Demo.git
+git clone https://github.com/Abhiram-Rakesh/Two-Tier-CI-CD-Jenkins--Demo.git
 cd Two-Tier-CI-CD-Jenkins--Demo
 ```
 
 ---
 
-### 2️⃣ Run the Installer Script
+### 2. Run the Installer Script
 
 The installer performs **all privileged system setup**:
 
@@ -104,11 +104,11 @@ chmod +x scripts/install.sh
 ./scripts/install.sh
 ```
 
-> `install.sh` is the **only script that uses sudo**. All other scripts are non-interactive and CI-safe.
+> NOTE: `install.sh` is the **only script that uses sudo**. All other scripts are non-interactive and CI-safe.
 
 ---
 
-### 3️⃣ Start the Application Manually (Validation Step)
+### 3. Start the Application Manually (Validation Step)
 
 Before using Jenkins, validate the runtime manually:
 
@@ -125,7 +125,184 @@ http://<EC2_PUBLIC_IP>
 
 ---
 
-### 4️⃣ Jenkins Setup
+### 4. Jenkins Setup
+
+Access Jenkins:
+
+```
+http://<EC2_PUBLIC_IP>:8080
+```
+
+Unlock Jenkins:
+
+```bash
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+Required Jenkins setup:
+
+- Install suggested plugins
+- Add Jenkins user to `docker` group
+- Restart Jenkins once
+
+---
+
+### 5. Jenkins Build Pipeline
+
+This section explains **how to create and configure the Jenkins pipeline job** that drives the CI/CD process for this project.
+
+#### Step 1: Create a New Jenkins Job
+
+1. Open Jenkins in your browser:
+
+   ```
+   http://<EC2_PUBLIC_IP>:8080
+   ```
+
+2. Click **New Item**
+3. Enter a job name (example):
+
+   ```
+   Two-Tier-CI-CD-Jenkins--Demo
+   ```
+
+4. Select **Pipeline**
+5. Click **OK**
+
+---
+
+#### Step 2: Configure Pipeline Source
+
+In the job configuration page:
+
+1. Scroll to **Pipeline** section
+2. Under **Definition**, select:
+
+   ```
+   Pipeline script from SCM
+   ```
+
+3. Select **SCM**: `Git`
+4. Repository URL:
+
+   ```
+   https://github.com/Abhiram-Rakesh/Two-Tier-CI-CD-Jenkins--Demo.git
+   ```
+
+5. Branch to build:
+
+   ```
+   */main
+   ```
+
+6. Script Path:
+
+   ```
+   Jenkinsfile
+   ```
+
+---
+
+#### Step 3: Enable GitHub Webhook Trigger
+
+1. Scroll to **Build Triggers**
+2. Enable:
+
+   ```
+   GitHub hook trigger for GITScm polling
+   ```
+
+3. Leave **SCM Polling** disabled
+
+---
+
+#### Step 4: Save and Run Initial Build
+
+1. Click **Save**
+2. Click **Build Now**
+3. Observe the pipeline stages:
+   - Checkout Code
+   - Pre-Deployment Check
+   - Prepare Environment
+   - Shutdown Existing Application
+   - Deploy Application
+
+A successful build confirms that Jenkins can:
+
+- Pull code from GitHub
+- Execute deployment scripts
+- Start the application stack correctly
+
+---
+
+#### Pipeline Design Notes
+
+- All deployment logic lives in shell scripts (`start.sh`, `shutdown.sh`)
+- Jenkins acts only as an orchestrator
+- No `sudo` commands are executed inside Jenkins
+- The pipeline is safe for non-interactive execution
+
+---
+
+### 6. GitHub Webhook (Auto Deploy)
+
+Webhook endpoint:
+
+```
+http://<EC2_PUBLIC_IP>:8080/github-webhook/
+```
+
+Webhook settings:
+
+- Content type: `application/json`
+- Trigger: `push` events
+
+Once configured:
+
+```bash
+git push origin main
+```
+
+Automatically triggers a Jenkins deployment.
+
+---
+
+### 2. Run the Installer Script
+
+The installer performs **all privileged system setup**:
+
+- Docker installation
+- Docker Compose installation
+- User permissions
+- (Optional) Jenkins installation
+
+```bash
+chmod +x scripts/install.sh
+./scripts/install.sh
+```
+
+> NOTE: `install.sh` is the **only script that uses sudo**. All other scripts are non-interactive and CI-safe.
+
+---
+
+### 3. Start the Application Manually (Validation Step)
+
+Before using Jenkins, validate the runtime manually:
+
+```bash
+chmod +x scripts/start.sh
+./scripts/start.sh
+```
+
+Verify in browser:
+
+```
+http://<EC2_PUBLIC_IP>
+```
+
+---
+
+### 4. Jenkins Setup
 
 Start Jenkins **only when needed**:
 
@@ -153,7 +330,7 @@ Required Jenkins setup:
 
 ---
 
-### 5️⃣ CI/CD Pipeline Configuration
+### 5. CI/CD Pipeline Configuration
 
 - The pipeline is defined in the `Jenkinsfile`
 - Jenkins performs:
@@ -166,7 +343,7 @@ The pipeline **reuses the same scripts** used for manual deployments.
 
 ---
 
-### 6️⃣ GitHub Webhook (Auto Deploy)
+### 6. GitHub Webhook (Auto Deploy)
 
 Webhook endpoint:
 
@@ -250,3 +427,5 @@ This project demonstrates:
 - You understand **how deployments actually work**
 - You can debug real infrastructure issues
 - You design automation that is **safe, repeatable, and realistic**
+
+---
