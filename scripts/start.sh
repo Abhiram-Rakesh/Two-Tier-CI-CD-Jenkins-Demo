@@ -60,7 +60,7 @@ fi
 # Build & start containers
 
 info "Starting application stack..."
-sudo docker-compose up -d
+docker-compose up -d
 
 # Post-start verification
 
