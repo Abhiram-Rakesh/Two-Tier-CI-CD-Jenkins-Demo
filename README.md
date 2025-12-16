@@ -17,34 +17,8 @@ This project is designed to be **resume-ready** and mirrors how small-to-medium 
 
 ## Architecture
 
-```
-+-----------------+        +----------------------+        +-----------------------------+
-|   Developer     | -----> |     GitHub Repo      | -----> |        Jenkins Server       |
-| (git push)      |        | (Source Control)     |        |  (CI/CD Orchestrator)      |
-+-----------------+        +----------------------+        |                             |
-                                                             | 1. Clones Repository       |
-                                                             | 2. Prepares Environment    |
-                                                             | 3. Executes Scripts        |
-                                                             +--------------+--------------+
-                                                                            |
-                                                                            | Deploys
-                                                                            v
-                                                             +-----------------------------+
-                                                             |      Application Server     |
-                                                             |        (AWS EC2)            |
-                                                             |                             |
-                                                             | +-------------------------+ |
-                                                             | | Flask App (Gunicorn)    | |
-                                                             | | Port 5000 -> 80         | |
-                                                             | +-------------------------+ |
-                                                             |              |              |
-                                                             |              v              |
-                                                             | +-------------------------+ |
-                                                             | | MySQL Database          | |
-                                                             | | Persistent Volume       | |
-                                                             | +-------------------------+ |
-                                                             +-----------------------------+
-```
+<img width="791" height="811" alt="Two-Tier-CI-CD(Jenkins)-Demo" src="https://github.com/user-attachments/assets/2d908a07-6f07-496d-9013-1e404d42d66d" />
+
 
 ### Key Design Decisions
 
