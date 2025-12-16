@@ -12,5 +12,5 @@ python -c "from app.db.mysql import init_db; init_db()"
 
 exec gunicorn \
     --bind 0.0.0.0:5000 \
-    --workers 3 \
+    --workers 1 \
     app.app:app
