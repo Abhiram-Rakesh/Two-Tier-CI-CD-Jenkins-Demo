@@ -61,7 +61,6 @@ fi
 
 info "Starting application stack..."
 sudo docker-compose up -d
-sudo docker exec flask-app python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000')"
 
 # Post-start verification
 
@@ -69,22 +68,22 @@ info "Verifying container status..."
 
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
-# # Application health check
-#
-# info "Waiting for application to become available..."
-#
-# ATTEMPTS=10
-# SLEEP=3
-#
-# for i in $(seq 1 $ATTEMPTS); do
-#     if curl -fsS http://127.0.0.1 >/dev/null; then
-#         info "Application is up and responding on port 80"
-#         break
-#     else
-#         warn "Waiting for application... ($i/$ATTEMPTS)"
-#         sleep $SLEEP
-#     fi
-# done
+# Application health check
+
+info "Waiting for application to become available..."
+
+ATTEMPTS=10
+SLEEP=3
+
+for i in $(seq 1 $ATTEMPTS); do
+    if curl -fsS http://127.0.0.1 >/dev/null; then
+        info "Application is up and responding on port 80"
+        break
+    else
+        warn "Waiting for application... ($i/$ATTEMPTS)"
+        sleep $SLEEP
+    fi
+done
 
 # Final status
 

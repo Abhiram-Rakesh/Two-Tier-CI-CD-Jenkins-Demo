@@ -34,7 +34,7 @@ command -v docker >/dev/null 2>&1 || {
     exit 1
 }
 
-docker compose version >/dev/null 2>&1 || {
+docker-compose version >/dev/null 2>&1 || {
     error "Docker Compose is not available"
     exit 1
 }
@@ -43,7 +43,7 @@ docker compose version >/dev/null 2>&1 || {
 
 info "Stopping application stack..."
 
-docker compose down
+docker-compose down
 
 # Post-shutdown verification
 

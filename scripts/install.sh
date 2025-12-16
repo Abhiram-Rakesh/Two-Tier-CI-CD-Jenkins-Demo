@@ -160,7 +160,7 @@ fi
 info "Validating installations..."
 
 docker --version
-docker compose version
+docker-compose --version
 systemctl status docker --no-pager
 systemctl status jenkins --no-pager
 
