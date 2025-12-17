@@ -71,7 +71,6 @@ The installer performs **all privileged system setup**:
 - Docker installation
 - Docker Compose installation
 - User permissions
-- (Optional) Jenkins installation
 
 ```bash
 chmod +x scripts/install.sh
@@ -295,12 +294,5 @@ This project demonstrates:
 - Script-driven deployments
 - CI/CD automation using Jenkins
 - Proper handling of permissions and secrets
-- Awareness of infrastructure limitations
-
-### What this project proves
-
-- You understand **how deployments actually work**
-- You can debug real infrastructure issues
-- You design automation that is **safe, repeatable, and realistic**
 
 ---
