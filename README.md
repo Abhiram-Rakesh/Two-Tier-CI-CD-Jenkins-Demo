@@ -17,34 +17,8 @@ This project is designed to be **resume-ready** and mirrors how small-to-medium 
 
 ## Architecture
 
-```
-+-----------------+        +----------------------+        +-----------------------------+
-|   Developer     | -----> |     GitHub Repo      | -----> |        Jenkins Server       |
-| (git push)      |        | (Source Control)     |        |  (CI/CD Orchestrator)      |
-+-----------------+        +----------------------+        |                             |
-                                                             | 1. Clones Repository       |
-                                                             | 2. Prepares Environment    |
-                                                             | 3. Executes Scripts        |
-                                                             +--------------+--------------+
-                                                                            |
-                                                                            | Deploys
-                                                                            v
-                                                             +-----------------------------+
-                                                             |      Application Server     |
-                                                             |        (AWS EC2)            |
-                                                             |                             |
-                                                             | +-------------------------+ |
-                                                             | | Flask App (Gunicorn)    | |
-                                                             | | Port 5000 -> 80         | |
-                                                             | +-------------------------+ |
-                                                             |              |              |
-                                                             |              v              |
-                                                             | +-------------------------+ |
-                                                             | | MySQL Database          | |
-                                                             | | Persistent Volume       | |
-                                                             | +-------------------------+ |
-                                                             +-----------------------------+
-```
+<img width="812" height="802" alt="Two-Tier-CI-CD(Jenkins)-Demo(1)" src="https://github.com/user-attachments/assets/2b907eb2-db3f-4fe8-9617-4936ab83a1ed" />
+
 
 ### Key Design Decisions
 
@@ -97,7 +71,6 @@ The installer performs **all privileged system setup**:
 - Docker installation
 - Docker Compose installation
 - User permissions
-- (Optional) Jenkins installation
 
 ```bash
 chmod +x scripts/install.sh
@@ -267,105 +240,6 @@ Automatically triggers a Jenkins deployment.
 
 ---
 
-### 2. Run the Installer Script
-
-The installer performs **all privileged system setup**:
-
-- Docker installation
-- Docker Compose installation
-- User permissions
-- (Optional) Jenkins installation
-
-```bash
-chmod +x scripts/install.sh
-./scripts/install.sh
-```
-
-> NOTE: `install.sh` is the **only script that uses sudo**. All other scripts are non-interactive and CI-safe.
-
----
-
-### 3. Start the Application Manually (Validation Step)
-
-Before using Jenkins, validate the runtime manually:
-
-```bash
-chmod +x scripts/start.sh
-./scripts/start.sh
-```
-
-Verify in browser:
-
-```
-http://<EC2_PUBLIC_IP>
-```
-
----
-
-### 4. Jenkins Setup
-
-Start Jenkins **only when needed**:
-
-```bash
-sudo systemctl start jenkins
-```
-
-Access Jenkins:
-
-```
-http://<EC2_PUBLIC_IP>:8080
-```
-
-Unlock Jenkins:
-
-```bash
-sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-```
-
-Required Jenkins setup:
-
-- Install suggested plugins
-- Add Jenkins user to `docker` group
-- Restart Jenkins once
-
----
-
-### 5. CI/CD Pipeline Configuration
-
-- The pipeline is defined in the `Jenkinsfile`
-- Jenkins performs:
-  - Code checkout
-  - Environment preparation
-  - Controlled shutdown
-  - Fresh deployment
-
-The pipeline **reuses the same scripts** used for manual deployments.
-
----
-
-### 6. GitHub Webhook (Auto Deploy)
-
-Webhook endpoint:
-
-```
-http://<EC2_PUBLIC_IP>:8080/github-webhook/
-```
-
-Webhook settings:
-
-- Content type: `application/json`
-- Trigger: `push` events
-
-Once configured:
-
-```bash
-git push origin main
-```
-
-Automatically triggers a Jenkins deployment.
-
----
-
 ## Troubleshooting Guide
 
 ### Jenkins build fails due to sudo
@@ -420,12 +294,5 @@ This project demonstrates:
 - Script-driven deployments
 - CI/CD automation using Jenkins
 - Proper handling of permissions and secrets
-- Awareness of infrastructure limitations
-
-### What this project proves
-
-- You understand **how deployments actually work**
-- You can debug real infrastructure issues
-- You design automation that is **safe, repeatable, and realistic**
 
 ---
