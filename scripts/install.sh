@@ -137,10 +137,10 @@ apt)
         sudo install -d -m 0755 /usr/share/keyrings
         
         # Import key in dearmored binary format (.gpg)
-        info "Downloading Jenkins GPG key..."
-        if ! curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg; then
-            warn "Primary key source failed, trying alternative URL..."
-            if ! curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg; then
+        info "Downloading Jenkins GPG key (2026 key for latest releases)..."
+        if ! curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key | sudo gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg; then
+            warn "2026 key failed, trying 2023 key as fallback..."
+            if ! curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg; then
                 error "Jenkins GPG key installation failed from all sources"
                 exit 1
             fi
@@ -213,4 +213,5 @@ echo -e "\033[1;36m-----------------------------------------------\033[0m"
 echo -e "\033[1;36m Next Steps:                                   \033[0m"
 echo -e "\033[1;36m 1. Log out & log back in (Docker permissions) \033[0m"
 echo -e "\033[1;36m 2. Configure Jenkins                          \033[0m"
-echo -e "\033[1;36m 3. Run ./
+echo -e "\033[1;36m 3. Run ./scripts/start.sh                     \033[0m"
+echo -e "\033[1;36m===============================================\033[0m\n"
