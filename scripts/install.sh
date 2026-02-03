@@ -120,24 +120,37 @@ apt)
         sudo apt update -y
         sudo apt install -y ca-certificates curl gnupg openjdk-17-jdk
 
-        # Jenkins GPG key (safe + idempotent)
+        # Jenkins GPG key (updated method for 2024+)
         sudo install -d -m 0755 /usr/share/keyrings
-        curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key \
-          | sudo tee /usr/share/keyrings/jenkins-keyring.asc >/dev/null
-        sudo chmod 0644 /usr/share/keyrings/jenkins-keyring.asc
+        
+        # Import key in dearmored binary format (.gpg)
+        info "Downloading Jenkins GPG key..."
+        if ! curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg; then
+            warn "Primary key source failed, trying alternative URL..."
+            if ! curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg; then
+                error "Jenkins GPG key installation failed from all sources"
+                exit 1
+            fi
+        fi
 
-        # Fail fast if key is missing
-        if [[ ! -s /usr/share/keyrings/jenkins-keyring.asc ]]; then
-            error "Jenkins GPG key installation failed"
+        sudo chmod 0644 /usr/share/keyrings/jenkins-keyring.gpg
+
+        # Fail fast if key is missing or empty
+        if [[ ! -s /usr/share/keyrings/jenkins-keyring.gpg ]]; then
+            error "Jenkins GPG key file is empty or missing"
             exit 1
         fi
 
-        # Jenkins repo (single-line, no escapes)
-        echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" \
+        info "Jenkins GPG key installed successfully"
+
+        # Jenkins repo (using .gpg binary format, not .asc)
+        echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.gpg] https://pkg.jenkins.io/debian-stable binary/" \
           | sudo tee /etc/apt/sources.list.d/jenkins.list >/dev/null
 
         # Install Jenkins
+        info "Updating apt cache with Jenkins repo..."
         sudo apt update -y
+        info "Installing Jenkins..."
         sudo apt install -y jenkins
         ;;
     yum)
