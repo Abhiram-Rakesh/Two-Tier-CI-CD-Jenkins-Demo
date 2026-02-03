@@ -120,6 +120,19 @@ apt)
         sudo apt update -y
         sudo apt install -y ca-certificates curl gnupg openjdk-17-jdk
 
+        # Clean up any old Jenkins repo/key configuration
+        info "Cleaning up old Jenkins configuration..."
+        sudo rm -f /etc/apt/sources.list.d/jenkins.list
+        sudo rm -f /usr/share/keyrings/jenkins-keyring.asc
+        sudo rm -f /usr/share/keyrings/jenkins-keyring.gpg
+        sudo rm -f /etc/apt/trusted.gpg.d/jenkins.gpg
+        
+        # Remove old keys from apt-key if they exist
+        if sudo apt-key list 2>/dev/null | grep -q jenkins; then
+            warn "Removing old Jenkins keys from deprecated apt-key..."
+            sudo apt-key del 7198F4B714ABFC68 2>/dev/null || true
+        fi
+
         # Jenkins GPG key (updated method for 2024+)
         sudo install -d -m 0755 /usr/share/keyrings
         
@@ -200,5 +213,4 @@ echo -e "\033[1;36m-----------------------------------------------\033[0m"
 echo -e "\033[1;36m Next Steps:                                   \033[0m"
 echo -e "\033[1;36m 1. Log out & log back in (Docker permissions) \033[0m"
 echo -e "\033[1;36m 2. Configure Jenkins                          \033[0m"
-echo -e "\033[1;36m 3. Run ./scripts/start.sh                     \033[0m"
-echo -e "\033[1;36m===============================================\033[0m\n"
+echo -e "\033[1;36m 3. Run ./
